@@ -6,22 +6,27 @@ from khata.models import AppUser, Transaction, Group, ExpenseCategory, ExpenseIt
 
 
 class AppUserAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('email', 'first_name', 'last_name',
+                    'date_joined', 'phone_number', 'is_staff')
 
 
 class TransactionAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('title', 'date_posted', 'item_date', 'amount', 'paid_by')
+    list_display_links = ('title', 'paid_by')
 
 
 class GroupAdmin(admin.ModelAdmin):
     pass
 
+
 class ExpenseItemAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('title', 'date_posted', 'item_date',
+                    'amount', 'appuser', 'expense_category')
+    list_display_links = ('title', 'appuser')
+
 
 class ExpenseCategoryAdmin(admin.ModelAdmin):
     pass
-
 
 
 admin.site.register(AppUser, AppUserAdmin)
