@@ -38,12 +38,11 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
 class Transaction(models.Model):
     title = models.CharField(max_length=200, blank=False)
     date_posted = models.DateTimeField(default=timezone.now)
-    item_date = models.DateTimeField(null=True)
+    item_date = models.DateTimeField(null=True, blank=True)
     amount = models.DecimalField(
         blank=False, verbose_name="Total Amount", max_digits=15, decimal_places=2)
     paid_by = models.ForeignKey(
         AppUser, on_delete=models.CASCADE, verbose_name="Paid By")
-    # group = models.ForeignKey("Group", null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return f"{self.title} - ${self.amount}"
@@ -62,13 +61,13 @@ class Group(models.Model):
 class ExpenseItem(models.Model):
     title = models.CharField(max_length=200, verbose_name="Title", blank=False)
     date_posted = models.DateTimeField(default=timezone.now)
-    item_date = models.DateTimeField()
+    item_date = models.DateTimeField(null=True, blank=True)
     amount = models.DecimalField(
         blank=False, verbose_name="Amount", max_digits=11, decimal_places=2)
-    appuser = models.OneToOneField(
+    appuser = models.ForeignKey(
         AppUser, on_delete=models.CASCADE, verbose_name="User")
-    expense_category = models.OneToOneField(
-        "ExpenseCategory", on_delete=models.SET_NULL, verbose_name="Category", null=True)
+    expense_category = models.ForeignKey(
+        "ExpenseCategory", on_delete=models.SET_NULL, verbose_name="Category", null=True, blank=True)
 
     def __str__(self):
         return f"{self.title} {str(self.item_date)}"

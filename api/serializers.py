@@ -12,17 +12,10 @@ class AppUserSerializer(serializers.ModelSerializer):
 class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
-        fields = '__all__'
-    paid_by = serializers.SerializerMethodField('get_paid_by')
-
-    def get_paid_by(self, obj):
-        return {
-            'email': obj.paid_by.email,
-            'id': obj.paid_by.id
-        }
+        fields = ('title', 'date_posted', 'amount', 'paid_by')
 
 
-class ExpenseItemSerializer(serializers.ModelSerializer):
+class ExpenseItemSerializer1(serializers.ModelSerializer):
     class Meta:
         model = ExpenseItem
         fields = '__all__'
@@ -34,6 +27,12 @@ class ExpenseItemSerializer(serializers.ModelSerializer):
             'email': obj.appuser.email,
             'id': obj.appuser.id
         }
+
+
+class ExpenseItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ExpenseItem
+        fields = '__all__'
 
 
 class CategorySerializer(serializers.ModelSerializer):
