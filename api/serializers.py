@@ -6,7 +6,7 @@ from khata.models import AppUser, Transaction, ExpenseItem, ExpenseCategory
 class AppUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = AppUser
-        fields = ('id', 'email', 'first_name', 'last_name', 'phone_number')
+        fields = ('id', 'email', 'first_name', 'last_name', 'phone_number','profile_pic','appgroups')
 
 
 class TransactionSerializer(serializers.ModelSerializer):

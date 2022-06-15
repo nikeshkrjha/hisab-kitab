@@ -1,3 +1,4 @@
+from pyexpat import model
 from unicodedata import category
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
@@ -43,19 +44,23 @@ class Transaction(models.Model):
         blank=False, verbose_name="Total Amount", max_digits=15, decimal_places=2)
     paid_by = models.ForeignKey(
         AppUser, on_delete=models.CASCADE, verbose_name="Paid By")
+    group = models.ForeignKey("Group", null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.title} - ${self.amount}"
 
 
 class Group(models.Model):
-    # group_name = models.CharField(
-    #     verbose_name="Group Name", max_length=200, blank=False)
-    # date_created = models.DateTimeField(default=timezone.now)
-    # created_by = models.ForeignKey(
-    #     AppUser, on_delete=models.CASCADE, verbose_name="Created By", related_name="group")
-    # members = models.ManyToManyField(AppUser, related_name="group_membership")
-    pass
+    group_name = models.CharField(
+        verbose_name="Group Name", max_length=200, blank=False)
+    date_created = models.DateTimeField(default=timezone.now)
+    created_by = models.ForeignKey(
+        AppUser, on_delete=models.CASCADE, verbose_name="Created By", related_name="group")
+    members = models.ManyToManyField(
+        AppUser, related_name="appgroups")
+
+    def __str__(self):
+        return self.group_name
 
 
 class ExpenseItem(models.Model):

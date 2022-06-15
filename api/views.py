@@ -8,12 +8,11 @@ from rest_framework import status
 from khata.models import AppUser, ExpenseCategory, ExpenseItem, Transaction
 from api.serializers import AppUserSerializer, CategorySerializer, ExpenseItemSerializer, TransactionSerializer, ExpenseItemSerializer1
 import logging
-
+from . import constants
 # Create your views here.
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-logger.info('message')
 
 @csrf_exempt
 @api_view(['GET', 'POST'])
@@ -67,8 +66,10 @@ def exp_category_list(request):
 def expenses_list(request):
     if request.method == 'GET':
         logging.debug(request.data)
-        if 'appuser' in request.data:
-            expenses = ExpenseItem.objects.filter(appuser__id=request.data['appuser'])
+        if constants.APPUSER in request.data:
+            expenses = ExpenseItem.objects.filter(
+                appuser__id=request.data[constants.APPUSER])
+            logger.debug(expenses)    
         else:
             expenses = ExpenseItem.objects.all()
         serializer = ExpenseItemSerializer1(expenses, many=True)
@@ -80,3 +81,25 @@ def expenses_list(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def expenses_detail(request, pk):
+    """
+    Retrieve, update or delete a code snippet.
+    """
+    logger.debug(request.data)
+    try:
+        if constants.APPUSER not in request.data:
+            return Response({"message": "missing user id in request body"}, status=status.HTTP_400_BAD_REQUEST)
+        exp_item = ExpenseItem.objects.get(
+            appuser__id=request.data[constants.APPUSER], id=pk)
+    except ExpenseItem.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'DELETE':
+        exp_item.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    elif request.method == 'GET':
+        serializer = ExpenseItemSerializer(exp_item)
+        return Response(serializer.data, status=status.HTTP_200_OK)
