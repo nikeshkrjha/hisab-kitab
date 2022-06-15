@@ -11,8 +11,8 @@ class AppUserAdmin(admin.ModelAdmin):
 
 
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ('title', 'date_posted', 'item_date', 'amount', 'paid_by')
-    list_display_links = ('title', 'paid_by')
+    list_display = ('title', 'date_posted', 'item_date', 'amount', 'group','paid_by')
+    list_display_links = ('title', 'paid_by','group')
 
 
 class GroupAdmin(admin.ModelAdmin):
