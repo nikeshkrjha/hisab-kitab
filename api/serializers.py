@@ -1,6 +1,6 @@
 from re import A
 from rest_framework import serializers
-from khata.models import AppUser, Transaction, ExpenseItem, ExpenseCategory
+from khata.models import AppUser, Transaction, ExpenseItem, ExpenseCategory, Group
 
 
 class AppUserSerializer(serializers.ModelSerializer):
@@ -38,4 +38,10 @@ class ExpenseItemSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ExpenseCategory
+        fields = '__all__'
+
+class GroupSerializer(serializers.ModelSerializer):
+    # members = AppUserSerializer(many=True)
+    class Meta:
+        model = Group
         fields = '__all__'

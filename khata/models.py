@@ -35,6 +35,9 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
+    def __unicode__(self):
+        return '%d: %s' % (self.id, self.email)
+
 
 class Transaction(models.Model):
     title = models.CharField(max_length=200, blank=False)
@@ -70,9 +73,11 @@ class ExpenseItem(models.Model):
     amount = models.DecimalField(
         blank=False, verbose_name="Amount", max_digits=11, decimal_places=2)
     appuser = models.ForeignKey(
-        AppUser, on_delete=models.CASCADE, verbose_name="User")
+        AppUser, on_delete=models.CASCADE, verbose_name="User", related_name="expenses")
     expense_category = models.ForeignKey(
         "ExpenseCategory", on_delete=models.SET_NULL, verbose_name="Category", null=True, blank=True)
+    expense_item_pic = models.ImageField(
+        upload_to='user_uploads', verbose_name="Receipt or other relevent picture", null=True, blank=True)
 
     def __str__(self):
         return f"{self.title} {str(self.item_date)}"
@@ -81,6 +86,8 @@ class ExpenseItem(models.Model):
 class ExpenseCategory(models.Model):
     category_name = models.CharField(
         max_length=200, verbose_name="name", blank=False)
+    created_by = models.ForeignKey(
+        AppUser, on_delete=models.CASCADE, null=False, blank=False, verbose_name="Created By", related_name="expense_categories")
 
     def __str__(self):
         return self.category_name

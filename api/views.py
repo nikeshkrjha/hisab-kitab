@@ -5,14 +5,17 @@ from rest_framework.parsers import JSONParser
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from khata.models import AppUser, ExpenseCategory, ExpenseItem, Transaction
-from api.serializers import AppUserSerializer, CategorySerializer, ExpenseItemSerializer, TransactionSerializer, ExpenseItemSerializer1
+from khata.models import AppUser, ExpenseCategory, ExpenseItem, Group, Transaction
+from api.serializers import AppUserSerializer, CategorySerializer, ExpenseItemSerializer, GroupSerializer, \
+    TransactionSerializer,\
+    ExpenseItemSerializer1
 import logging
 from . import constants
 # Create your views here.
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+
 
 @csrf_exempt
 @api_view(['GET', 'POST'])
@@ -69,7 +72,7 @@ def expenses_list(request):
         if constants.APPUSER in request.data:
             expenses = ExpenseItem.objects.filter(
                 appuser__id=request.data[constants.APPUSER])
-            logger.debug(expenses)    
+            logger.debug(expenses)
         else:
             expenses = ExpenseItem.objects.all()
         serializer = ExpenseItemSerializer1(expenses, many=True)
@@ -91,7 +94,7 @@ def expenses_detail(request, pk):
     logger.debug(request.data)
     try:
         if constants.APPUSER not in request.data:
-            return Response({"message": "missing user id in request body"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "missing user id in request body"}, status=status.HTTP_400_BAD_REQUEST)
         exp_item = ExpenseItem.objects.get(
             appuser__id=request.data[constants.APPUSER], id=pk)
     except ExpenseItem.DoesNotExist:
@@ -103,3 +106,17 @@ def expenses_detail(request, pk):
     elif request.method == 'GET':
         serializer = ExpenseItemSerializer(exp_item)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    elif request.method == 'PUT':
+        serializer = ExpenseItemSerializer(expenses_detail, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'POST'])
+def groups_list(request):
+    if request.method == 'GET':
+        categories = Group.objects.all()
+        serializer = GroupSerializer(categories, many=True)
+        return JsonResponse(serializer.data, safe=False)
