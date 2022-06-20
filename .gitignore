@@ -6,7 +6,8 @@ __pycache__
 db.sqlite3
 media
 user_uploads
-khata/migrations/
+migrations/
+migrations
 
 # Backup files # 
 *.bak 
