@@ -1,4 +1,3 @@
-from re import A
 from rest_framework import serializers
 from khata.models import AppUser, Transaction, ExpenseItem, ExpenseCategory, Group
 
@@ -6,7 +5,9 @@ from khata.models import AppUser, Transaction, ExpenseItem, ExpenseCategory, Gro
 class AppUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = AppUser
-        fields = ('id', 'email', 'first_name', 'last_name', 'phone_number','profile_pic','appgroups')
+        # fields = ('email', 'first_name', 'last_name', 'phone_number','profile_pic','appgroups')
+        fields = "__all__"
+        extra_kwargs = {'password': {'write_only': True}}
 
 
 class TransactionSerializer(serializers.ModelSerializer):
