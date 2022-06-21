@@ -5,6 +5,10 @@ from django.db import models
 from django.forms import CharField
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
 
 from khata.managers import CustomUserManager
 
@@ -87,7 +91,13 @@ class ExpenseCategory(models.Model):
     category_name = models.CharField(
         max_length=200, verbose_name="name", blank=False)
     created_by = models.ForeignKey(
-        AppUser, on_delete=models.CASCADE, null=False, blank=False, verbose_name="Created By", related_name="expense_categories")
+        AppUser, on_delete=models.CASCADE,verbose_name="Created By", related_name="expense_categories")
 
     def __str__(self):
         return self.category_name
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
